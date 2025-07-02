@@ -56,6 +56,11 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
 
   @override
   Widget build(BuildContext context) {
+    Set<String> allKeys = {};
+    final dt = data.toList();
+    for (var obj in dt) {
+      allKeys.addAll(obj.keys);
+    }
     return GestureDetector(
       onPanUpdate: (details) => widget.onDragUpdate(details.delta),
       child: Stack(
@@ -74,46 +79,25 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                     color: const Color.fromARGB(255, 7, 21, 206),
                     padding: const EdgeInsets.all(2),
                     child: Row(
-                      children: const [
-                        Expanded(
-                          flex: 4,
-                          child: Text(
-                            "Product",
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (var item in allKeys)
+                          Text(
+                            item.toString(),
                             textAlign: TextAlign.center,
                             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                           ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "Qty",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Text(
-                            "Rate",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                          ),
-                        ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 10),
                   Expanded(
                     child: ListView.builder(
-                      itemCount: data.length,
+                      itemCount: dt.length,
                       itemBuilder: (BuildContext context, int index) {
-                        final item = data[index];
+                        final ls = dt[index];
                         return Row(
-                          children: [
-                            Expanded(flex: 4, child: Text("${item['product']}", textAlign: TextAlign.center)),
-                            Expanded(flex: 3, child: Text("${item['qty']}", textAlign: TextAlign.center)),
-                            Expanded(flex: 3, child: Text("${item['rate']}", textAlign: TextAlign.center)),
-                          ],
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [for (var item in allKeys) Text("${ls[item] ?? " "}", textAlign: TextAlign.left)],
                         );
                       },
                     ),
