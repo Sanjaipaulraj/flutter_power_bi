@@ -75,31 +75,39 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
               child: Column(
                 children: [
                   Text("Table Visual ${widget.index + 1}", style: const TextStyle(fontWeight: FontWeight.bold)),
-                  Container(
-                    color: const Color.fromARGB(255, 7, 21, 206),
-                    padding: const EdgeInsets.all(2),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        for (var item in allKeys)
-                          Text(
-                            item.toString(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                          ),
-                      ],
-                    ),
-                  ),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: dt.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final ls = dt[index];
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [for (var item in allKeys) Text("${ls[item] ?? " "}", textAlign: TextAlign.left)],
-                        );
-                      },
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: Table(
+                        // border: TableBorder.all(), Optional for Table
+                        columnWidths: {for (int i = 0; i < allKeys.length; i++) i: IntrinsicColumnWidth()},
+                        children: [
+                          TableRow(
+                            decoration: const BoxDecoration(color: Color.fromARGB(255, 7, 21, 206)),
+                            children: [
+                              for (var item in allKeys)
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    item.toString(),
+                                    textAlign: TextAlign.left,
+                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                            ],
+                          ),
+                          for (var row in dt)
+                            TableRow(
+                              children: [
+                                for (var item in allKeys)
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("${row[item] ?? " "}", textAlign: TextAlign.left),
+                                  ),
+                              ],
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
