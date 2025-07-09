@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_power_bi/data.dart';
 
@@ -9,7 +11,18 @@ class DraggableDashboard extends StatefulWidget {
 }
 
 class _DraggableDashboardState extends State<DraggableDashboard> {
-  List<Offset> widgetPositions = [Offset(50, 50), Offset(250, 100), Offset(100, 300)];
+  int intValue = Random().nextInt(5) + 1; // Ensure at least 1
+  List<Offset> widgetPositions = [];
+  double width = 45;
+  double height = 45;
+
+  @override
+  void initState() {
+    super.initState();
+    for (var i = 0; i < intValue; i++) {
+      widgetPositions.add(Offset(width + (i * 50), height + (i * 50))); // Staggered positions
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +93,7 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                       scrollDirection: Axis.vertical,
                       child: Table(
                         // border: TableBorder.all(), Optional for Table
-                        columnWidths: {for (int i = 0; i < allKeys.length; i++) i: IntrinsicColumnWidth()},
+                        columnWidths: {for (int i = 0; i < allKeys.length; i++) i: FlexColumnWidth()},
                         children: [
                           TableRow(
                             decoration: const BoxDecoration(color: Color.fromARGB(255, 7, 21, 206)),
@@ -91,6 +104,7 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                                   child: Text(
                                     item.toString(),
                                     textAlign: TextAlign.left,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -102,7 +116,11 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                                 for (var item in allKeys)
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Text("${row[item] ?? " "}", textAlign: TextAlign.left),
+                                    child: Text(
+                                      "${row[item] ?? " "}",
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.left,
+                                    ),
                                   ),
                               ],
                             ),
