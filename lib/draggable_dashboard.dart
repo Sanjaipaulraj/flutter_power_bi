@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_power_bi/data.dart';
 
@@ -11,17 +11,29 @@ class DraggableDashboard extends StatefulWidget {
 }
 
 class _DraggableDashboardState extends State<DraggableDashboard> {
-  int intValue = Random().nextInt(5) + 1; // Ensure at least 1
+  int intValue = Random().nextInt(5) + 1;
   List<Offset> widgetPositions = [];
   double width = 45;
   double height = 45;
+  List<Map<String, dynamic>>? dt;
+  List<List<Map<String, dynamic>>> allTableData = [];
 
   @override
   void initState() {
     super.initState();
     for (var i = 0; i < intValue; i++) {
-      widgetPositions.add(Offset(width + (i * 50), height + (i * 50))); // Staggered positions
+      widgetPositions.add(Offset(width + (i * 50), height + (i * 50)));
     }
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    setState(() {
+      // dt = getArray();
+      for (int i = 0; i < intValue; i++) {
+        allTableData.add(getArray(i));
+      }
+    });
   }
 
   @override
@@ -37,6 +49,8 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
               top: widgetPositions[index].dy,
               child: DraggableResizableTable(
                 index: index,
+                // data: dt,
+                data: allTableData[index],
                 onDragUpdate: (details) {
                   setState(() {
                     widgetPositions[index] += details;
@@ -53,9 +67,10 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
 
 class DraggableResizableTable extends StatefulWidget {
   final int index;
+  final List<Map<String, dynamic>>? data;
   final void Function(Offset delta) onDragUpdate;
 
-  const DraggableResizableTable({super.key, required this.index, required this.onDragUpdate});
+  const DraggableResizableTable({super.key, required this.index, required this.data, required this.onDragUpdate});
 
   @override
   State<DraggableResizableTable> createState() => _DraggableResizableTableState();
@@ -67,13 +82,26 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
   double minWidth = 200;
   double minHeight = 200;
 
+  List<double> columnWidths = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.data != null && widget.data!.isNotEmpty) {
+      // Initialize column widths based on the number of columns
+      columnWidths = List.filled(widget.data![0].keys.length, width / widget.data![0].keys.length);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Set<String> allKeys = {};
-    final dt = data.toList();
-    for (var obj in dt) {
-      allKeys.addAll(obj.keys);
+    if (widget.data == null || widget.data!.isEmpty) {
+      return CircularProgressIndicator();
     }
+
+    Set<String> allKeys = widget.data![0].keys.toSet();
+    List<String> keysList = allKeys.toList();
+
     return GestureDetector(
       onPanUpdate: (details) => widget.onDragUpdate(details.delta),
       child: Stack(
@@ -89,50 +117,65 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                 children: [
                   Text("Table Visual ${widget.index + 1}", style: const TextStyle(fontWeight: FontWeight.bold)),
                   Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: Table(
-                        // border: TableBorder.all(), Optional for Table
-                        columnWidths: {for (int i = 0; i < allKeys.length; i++) i: FlexColumnWidth()},
-                        children: [
-                          TableRow(
-                            decoration: const BoxDecoration(color: Color.fromARGB(255, 7, 21, 206)),
+                    child: Column(
+                      children: [
+                        Container(
+                          color: const Color.fromARGB(255, 7, 21, 206),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              for (var item in allKeys)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    item.toString(),
-                                    textAlign: TextAlign.left,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              for (int i = 0; i < keysList.length; i++)
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      width: columnWidths[i],
+                                      child: Text(
+                                        keysList[i],
+                                        textAlign: TextAlign.left,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
                                   ),
                                 ),
                             ],
                           ),
-                          for (var row in dt)
-                            TableRow(
-                              children: [
-                                for (var item in allKeys)
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      "${row[item] ?? " "}",
-                                      overflow: TextOverflow.ellipsis,
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                              ],
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.vertical,
+                            child: Column(
+                              children: widget.data!.map((row) {
+                                return Row(
+                                  children: [
+                                    for (int i = 0; i < keysList.length; i++)
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: SizedBox(
+                                            width: columnWidths[i],
+                                            child: Text(
+                                              "${row[keysList[i]] ?? ""}",
+                                              overflow: TextOverflow.ellipsis,
+                                              textAlign: TextAlign.left,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                );
+                              }).toList(),
                             ),
-                        ],
-                      ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-
           // Left resize zone
           Positioned(
             left: 0,

@@ -1,10 +1,56 @@
-var data = [
-  {"Product": "Soap", "Qty": 23, "Rate": 52.03, "Mrp": 34},
-  {"Product": "Bread", "Qty": 55, "Rate": 63, "SRate": null},
-  {"Product": "Bottle", "Qty": 12, "Rate": 151},
-  {"Product": "Knife", "Qty": 63, "Rate": 96.20, "nlc": 12},
-  {"Product": "Spoon", "Qty": 45, "Rate": 74.85},
-  {"Product": "NotePad", "Qty": 31, "Rate": 35.14, "SRate": 45},
-  {"Product": "Box", "Qty": 41, "Rate": 72.5},
-  {"Product": "Soap", "Qty": 23, "Rate": 52.03, "PRate": 10},
-];
+import 'dart:math';
+import 'package:faker/faker.dart';
+
+// List<Map<String, dynamic>> getArray() {
+//   var faker = Faker();
+//   List<Map<String, dynamic>> list = [];
+//   int value = Random().nextInt(1000) + 1;
+//   print("Random Row : $value");
+//   for (var i = 0; i < value; i++) {
+//     list.add({
+//       "Name": faker.person.name(),
+//       "City": faker.address.city(),
+//       "Mobile": faker.phoneNumber.us(),
+//       "Company": faker.company.name(),
+//     });
+//   }
+//   return list;
+// }
+
+List<Map<String, dynamic>> getArray(int tableIndex) {
+  final faker = Faker();
+  final random = Random();
+  final int rowCount = random.nextInt(1000) + 10;
+
+  List<Map<String, dynamic>> data = [];
+
+  switch (tableIndex % 3) {
+    case 0:
+      for (int i = 0; i < rowCount; i++) {
+        data.add({
+          "Name": faker.person.name(),
+          "City": faker.address.city(),
+          "Mobile": faker.phoneNumber.us(),
+          "Company": faker.company.name(),
+        });
+      }
+      break;
+
+    case 1:
+      for (int i = 0; i < rowCount; i++) {
+        data.add({"Vehicle Name": faker.vehicle.make(), "Model": faker.vehicle.model(), "Year": faker.vehicle.year()});
+      }
+      break;
+
+    case 2:
+      for (int i = 0; i < rowCount; i++) {
+        data.add({"Restaurant": faker.food.restaurant(), "Dish": faker.food.dish(), "Cuisine": faker.food.cuisine()});
+      }
+      break;
+
+    default:
+      break;
+  }
+
+  return data;
+}

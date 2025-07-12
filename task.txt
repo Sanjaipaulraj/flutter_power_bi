@@ -1,0 +1,21 @@
+Tasks:
+Draggable and Resizable Table visuals:
+   1. Create a Table visual draggable to the page
+   2. Table visual is to be resizable like adjustable
+      their height and width
+Table visual Generation:
+   1. table generation in the page, random number 1 to 10
+      (if the random number is 4 then 4 table visual create)
+Table Data generation
+   1. create a data using fake api 
+   2. Validate data fields for needed table fields
+Data fetching:
+   1. fetch a data (json) from the fake api and the
+      json have multiple objects but the random function in the 
+      object ( 1 to 1000) if the number is 500 then 500 object 
+      fetch from the selective json array
+   2. seperate file for data fetching and use in the table visual
+Menu :
+   1. Create a menu for selecting table and table fields
+   2. Few Table visual model for different report 
+
