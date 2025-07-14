@@ -47,7 +47,6 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
               top: widgetPositions[index].dy,
               child: DraggableResizableTable(
                 index: index,
-                // data: dt,
                 data: allTableData[index],
                 onDragUpdate: (details) {
                   setState(() {
