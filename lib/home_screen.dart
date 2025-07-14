@@ -10,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool isSidebarVisible = true;
-  double sidebarWidth = 300; // Initial sidebar width like Power BI
+  double sidebarWidth = 300;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,6 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.grey[200],
       body: Column(
         children: [
-          // Header Bar (Power BI style)
           Container(
             height: 60,
             color: const Color.fromRGBO(247, 179, 215, 1),
@@ -46,75 +45,81 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
 
-          // Main Body (Sidebar + DraggableDashboard)
           Expanded(
             child: Row(
               children: [
-                // Main Dashboard Area
                 Expanded(
                   child: Container(color: Colors.grey[100], child: const DraggableDashboard()),
                 ),
 
-                // Right Sidebar (Filters Pane)
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   width: isSidebarVisible ? sidebarWidth : 0,
                   color: Colors.white,
-                  child: isSidebarVisible
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              color: const Color.fromARGB(255, 61, 54, 54),
-                              height: 50,
-                              child: const Center(
-                                child: Text(
-                                  "Filters Pane",
-                                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  child: (isSidebarVisible && sidebarWidth > 100)
+                      ? LayoutBuilder(
+                          builder: (context, constraints) {
+                            if (constraints.maxWidth < 100) {
+                              return const SizedBox();
+                            }
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  color: const Color.fromARGB(255, 61, 54, 54),
+                                  height: 50,
+                                  child: const Center(
+                                    child: Text(
+                                      "Filters Pane",
+                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ListView(
-                                  children: List.generate(5, (index) {
-                                    return Card(
-                                      margin: const EdgeInsets.symmetric(vertical: 8),
-                                      // child: ListTile(
-                                      //   leading: const Icon(Icons.filter_alt),
-                                      //   title: Text("Filter ${index + 1}"),
-                                      //   subtitle: const Text("Filter details here"),
-                                      // ),
-                                      child: Container(
-                                        padding: const EdgeInsets.only(left: 5, right: 5, top: 2, bottom: 2),
-                                        child: Row(
-                                          spacing: 5,
-                                          children: [
-                                            Icon(Icons.filter_alt),
-                                            Column(
-                                              spacing: 3,
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ListView(
+                                      children: List.generate(5, (index) {
+                                        return Card(
+                                          margin: const EdgeInsets.symmetric(vertical: 8),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  "Filter ${index + 1}",
-                                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                                ),
-                                                Text(
-                                                  "Filter details here",
-                                                  style: TextStyle(fontWeight: FontWeight.normal),
+                                                const Icon(Icons.filter_alt),
+                                                const SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: const [
+                                                      Text(
+                                                        "Filter title",
+                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                                                        overflow: TextOverflow.ellipsis,
+                                                        maxLines: 1,
+                                                      ),
+                                                      Text(
+                                                        "Filter details here",
+                                                        style: TextStyle(fontWeight: FontWeight.normal),
+                                                        overflow: TextOverflow.ellipsis,
+                                                        maxLines: 2,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
+                                          ),
+                                        );
+                                      }),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         )
                       : null,
                 ),
@@ -129,10 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: Container(
-                      width: 20,
+                      width: 40,
                       color: Colors.grey[300],
                       child: Center(
-                        // child: Icon(isSidebarVisible ? Icons.arrow_forward_ios : Icons.arrow_back_ios, size: 16),
                         child: Column(
                           spacing: 10,
                           mainAxisAlignment: MainAxisAlignment.center,

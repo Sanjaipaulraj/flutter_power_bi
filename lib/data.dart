@@ -1,22 +1,6 @@
 import 'dart:math';
 import 'package:faker/faker.dart';
 
-// List<Map<String, dynamic>> getArray() {
-//   var faker = Faker();
-//   List<Map<String, dynamic>> list = [];
-//   int value = Random().nextInt(1000) + 1;
-//   print("Random Row : $value");
-//   for (var i = 0; i < value; i++) {
-//     list.add({
-//       "Name": faker.person.name(),
-//       "City": faker.address.city(),
-//       "Mobile": faker.phoneNumber.us(),
-//       "Company": faker.company.name(),
-//     });
-//   }
-//   return list;
-// }
-
 List<Map<String, dynamic>> getArray(int tableIndex) {
   final faker = Faker();
   final random = Random();
