@@ -65,7 +65,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Container(
-                              color: const Color.fromARGB(255, 209, 201, 201),
+                              color: const Color.fromARGB(255, 61, 54, 54),
                               height: 50,
                               child: const Center(
                                 child: Text(

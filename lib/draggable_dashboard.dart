@@ -15,7 +15,6 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
   List<Offset> widgetPositions = [];
   double width = 45;
   double height = 45;
-  List<Map<String, dynamic>>? dt;
   List<List<Map<String, dynamic>>> allTableData = [];
 
   @override
@@ -29,7 +28,6 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
 
   Future<void> _loadData() async {
     setState(() {
-      // dt = getArray();
       for (int i = 0; i < intValue; i++) {
         allTableData.add(getArray(i));
       }
@@ -108,7 +106,7 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
         children: [
           Card(
             elevation: 6,
-            color: const Color.fromARGB(255, 180, 229, 238),
+            color: const Color.fromRGBO(244, 241, 223, 1),
             child: Container(
               width: width,
               height: height,
@@ -120,7 +118,7 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                     child: Column(
                       children: [
                         Container(
-                          color: const Color.fromARGB(255, 7, 21, 206),
+                          color: const Color.fromRGBO(27, 40, 67, 1),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
