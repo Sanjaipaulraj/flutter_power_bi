@@ -19,4 +19,5 @@ Menu :
    1. Create a menu for selecting table and table fields
    2. Few Table visual model for different report 
    3. Add a filter pane for the data filtration
+   4. Add a Visual pane for the data filtration
 
