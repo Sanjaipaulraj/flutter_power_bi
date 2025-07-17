@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_power_bi/dashboard_model.dart';
 import 'draggable_dashboard.dart';
+import 'dashboard_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,12 +11,37 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // bool isSidebarVisible = true;
-  // double sidebarWidth = 300;
-  bool isFilterPane = true;
-  bool isVisualPane = true;
-  double filterbarWidth = 300;
-  double visualbarWidth = 300;
+  List<TableConfig> tables = [];
+  List<Map<String, dynamic>> tableData = [];
+
+  @override
+  void initState() {
+    tableData = dashboard['tables'];
+    _loadData();
+    super.initState();
+    // print(jsonEncode(tables));
+  }
+
+  void _loadData() {
+    setState(() {
+      for (final el in tableData) {
+        tables.add(
+          TableConfig(
+            tableName: el['tableName'],
+            heading: el['heading'],
+            height: el['height'],
+            width: el['width'],
+            offsetX: el['offsetX'],
+            offsetY: el['offsetY'],
+            datasource: el['datasource'],
+            columns: (el['columns'] as List<dynamic>? ?? [])
+                .map((col) => col is ColumnConfig ? col : ColumnConfig.fromMap(col as Map<String, dynamic>))
+                .toList(),
+          ),
+        );
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,329 +80,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Row(
               children: [
                 Expanded(
-                  child: Container(color: Colors.grey[100], child: const DraggableDashboard()),
-                ),
-
-                // AnimatedContainer(
-                //   duration: const Duration(milliseconds: 300),
-                //   width: isSidebarVisible ? sidebarWidth : 0,
-                //   color: Colors.white,
-                //   child: (isSidebarVisible && sidebarWidth > 100)
-                //       ? LayoutBuilder(
-                //           builder: (context, constraints) {
-                //             if (constraints.maxWidth < 100) {
-                //               return const SizedBox();
-                //             }
-
-                //             return Column(
-                //               crossAxisAlignment: CrossAxisAlignment.stretch,
-                //               children: [
-                //                 Container(
-                //                   color: const Color.fromARGB(255, 61, 54, 54),
-                //                   height: 50,
-                //                   child: const Center(
-                //                     child: Text(
-                //                       "Filters Pane",
-                //                       style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                //                     ),
-                //                   ),
-                //                 ),
-                //                 Expanded(
-                //                   child: Padding(
-                //                     padding: const EdgeInsets.all(8.0),
-                //                     child: ListView(
-                //                       children: List.generate(5, (index) {
-                //                         return Card(
-                //                           margin: const EdgeInsets.symmetric(vertical: 8),
-                //                           child: Container(
-                //                             padding: const EdgeInsets.all(8.0),
-                //                             child: Row(
-                //                               crossAxisAlignment: CrossAxisAlignment.start,
-                //                               children: [
-                //                                 const Icon(Icons.filter_alt),
-                //                                 const SizedBox(width: 8),
-                //                                 Expanded(
-                //                                   child: Column(
-                //                                     crossAxisAlignment: CrossAxisAlignment.start,
-                //                                     children: const [
-                //                                       Text(
-                //                                         "Filter title",
-                //                                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                //                                         overflow: TextOverflow.ellipsis,
-                //                                         maxLines: 1,
-                //                                       ),
-                //                                       Text(
-                //                                         "Filter details here",
-                //                                         style: TextStyle(fontWeight: FontWeight.normal),
-                //                                         overflow: TextOverflow.ellipsis,
-                //                                         maxLines: 2,
-                //                                       ),
-                //                                     ],
-                //                                   ),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                           ),
-                //                         );
-                //                       }),
-                //                     ),
-                //                   ),
-                //                 ),
-                //               ],
-                //             );
-                //           },
-                //         )
-                //       : null,
-                // ),
-
-                //Filter Animated Container
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: isFilterPane ? filterbarWidth : 0,
-                  color: Colors.white,
-                  child: (isFilterPane && filterbarWidth > 100)
-                      ? LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth < 100) {
-                              return const SizedBox();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  color: const Color.fromARGB(255, 61, 54, 54),
-                                  height: 50,
-                                  child: const Center(
-                                    child: Text(
-                                      "Filters Pane",
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ListView(
-                                      children: List.generate(5, (index) {
-                                        return Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 8),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                const Icon(Icons.filter_alt),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: const [
-                                                      Text(
-                                                        "Filter title",
-                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                      Text(
-                                                        "Filter details here",
-                                                        style: TextStyle(fontWeight: FontWeight.normal),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      : null,
-                ),
-
-                //Filter Container toggle button
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isFilterPane = !isFilterPane;
-                    });
-                  },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Container(
-                      width: 40,
-                      color: Colors.grey[300],
-                      child: Center(
-                        child: Column(
-                          spacing: 10,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(isFilterPane ? Icons.arrow_forward_ios : Icons.arrow_back_ios, size: 16),
-                            if (isFilterPane != true)
-                              RotatedBox(
-                                quarterTurns: 1,
-                                child: Text(
-                                  "Filters",
-                                  style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-                //Visual Animated Container
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  width: isVisualPane ? visualbarWidth : 0,
-                  color: Colors.white,
-                  child: (isVisualPane && visualbarWidth > 100)
-                      ? LayoutBuilder(
-                          builder: (context, constraints) {
-                            if (constraints.maxWidth < 100) {
-                              return const SizedBox();
-                            }
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  color: const Color.fromARGB(255, 61, 54, 54),
-                                  height: 50,
-                                  child: const Center(
-                                    child: Text(
-                                      "Visual Pane",
-                                      style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: ListView(
-                                      children: List.generate(5, (index) {
-                                        return Card(
-                                          margin: const EdgeInsets.symmetric(vertical: 8),
-                                          child: Container(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                const Icon(Icons.filter_alt),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: const [
-                                                      Text(
-                                                        "Visual title",
-                                                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 1,
-                                                      ),
-                                                      Text(
-                                                        "Visual details here",
-                                                        style: TextStyle(fontWeight: FontWeight.normal),
-                                                        overflow: TextOverflow.ellipsis,
-                                                        maxLines: 2,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      : null,
-                ),
-
-                // Toggle Sidebar Button
-                // GestureDetector(
-                //   onTap: () {
-                //     setState(() {
-                //       isSidebarVisible = !isSidebarVisible;
-                //     });
-                //   },
-                //   child: MouseRegion(
-                //     cursor: SystemMouseCursors.click,
-                //     child: Container(
-                //       width: 40,
-                //       color: Colors.grey[300],
-                //       child: Center(
-                //         child: Column(
-                //           spacing: 10,
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           crossAxisAlignment: CrossAxisAlignment.center,
-                //           children: [
-                //             Icon(isSidebarVisible ? Icons.arrow_forward_ios : Icons.arrow_back_ios, size: 16),
-                //             if (isSidebarVisible != true)
-                //               RotatedBox(
-                //                 quarterTurns: 1,
-                //                 child: Text(
-                //                   "Filters",
-                //                   style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                //                   overflow: TextOverflow.ellipsis,
-                //                 ),
-                //               ),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
-
-                // Visual Container toggle button
-                GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      isVisualPane = !isVisualPane;
-                    });
-                  },
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: Container(
-                      width: 40,
-                      color: Colors.grey[300],
-                      child: Center(
-                        child: Column(
-                          spacing: 10,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(isVisualPane ? Icons.arrow_forward_ios : Icons.arrow_back_ios, size: 16),
-                            if (isVisualPane != true)
-                              RotatedBox(
-                                quarterTurns: 1,
-                                child: Text(
-                                  "Visuals",
-                                  style: TextStyle(fontSize: 16, color: Colors.black, fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  child: Container(
+                    color: Colors.grey[100],
+                    child: DraggableDashboard(tables: tables),
                   ),
                 ),
               ],

@@ -1,16 +1,18 @@
-import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_power_bi/data.dart';
+import 'package:flutter_power_bi/dashboard_model.dart';
 
+// ignore: must_be_immutable
 class DraggableDashboard extends StatefulWidget {
-  const DraggableDashboard({super.key});
+  List<TableConfig>? tables;
+  DraggableDashboard({super.key, required this.tables});
 
   @override
   State<DraggableDashboard> createState() => _DraggableDashboardState();
 }
 
 class _DraggableDashboardState extends State<DraggableDashboard> {
+  late List<TableConfig>? tables;
   int intValue = Random().nextInt(5) + 1;
   List<Offset> widgetPositions = [];
   double width = 45;
@@ -20,18 +22,7 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < intValue; i++) {
-      widgetPositions.add(Offset(width + (i * 50), height + (i * 50)));
-    }
-    _loadData();
-  }
-
-  Future<void> _loadData() async {
-    setState(() {
-      for (int i = 0; i < intValue; i++) {
-        allTableData.add(getArray(i));
-      }
-    });
+    tables = widget.tables;
   }
 
   @override
@@ -41,6 +32,7 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
         width: 2000,
         height: 2000,
         child: Stack(
+          clipBehavior: Clip.none,
           children: List.generate(widgetPositions.length, (index) {
             return Positioned(
               left: widgetPositions[index].dx,
@@ -50,7 +42,12 @@ class _DraggableDashboardState extends State<DraggableDashboard> {
                 data: allTableData[index],
                 onDragUpdate: (details) {
                   setState(() {
-                    widgetPositions[index] += details;
+                    widgetPositions[index] = widgetPositions[index] + details;
+                    // Manually constrain the position
+                    widgetPositions[index] = Offset(
+                      widgetPositions[index].dx.clamp(0.0, 1700 - 200), // Clamp the horizontal position
+                      widgetPositions[index].dy.clamp(0.0, 720 - 200), // Clamp the vertical position
+                    );
                   });
                 },
               ),
@@ -170,103 +167,6 @@ class _DraggableResizableTableState extends State<DraggableResizableTable> {
                     ),
                   ),
                 ],
-              ),
-            ),
-          ),
-          // Left resize zone
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: 10,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (details) {
-                  setState(() {
-                    width = (width - details.delta.dx).clamp(minWidth, double.infinity);
-                  });
-                  widget.onDragUpdate(Offset(details.delta.dx, 0));
-                },
-              ),
-            ),
-          ),
-
-          // Right resize zone
-          Positioned(
-            right: 0,
-            top: 0,
-            bottom: 0,
-            width: 10,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeLeftRight,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (details) {
-                  setState(() {
-                    width = (width + details.delta.dx).clamp(minWidth, double.infinity);
-                  });
-                },
-              ),
-            ),
-          ),
-
-          // Top resize zone
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 10,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeUpDown,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (details) {
-                  setState(() {
-                    height = (height - details.delta.dy).clamp(minHeight, double.infinity);
-                  });
-                  widget.onDragUpdate(Offset(0, details.delta.dy)); // shift down as we shrink up
-                },
-              ),
-            ),
-          ),
-
-          // Bottom resize zone
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: 10,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeUpDown,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (details) {
-                  setState(() {
-                    height = (height + details.delta.dy).clamp(minHeight, double.infinity);
-                  });
-                },
-              ),
-            ),
-          ),
-
-          // Bottom-Right corner (diagonal resize)
-          Positioned(
-            right: 0,
-            bottom: 0,
-            width: 20,
-            height: 20,
-            child: MouseRegion(
-              cursor: SystemMouseCursors.resizeUpLeftDownRight,
-              child: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onPanUpdate: (details) {
-                  setState(() {
-                    width = (width + details.delta.dx).clamp(minWidth, double.infinity);
-                    height = (height + details.delta.dy).clamp(minHeight, double.infinity);
-                  });
-                },
               ),
             ),
           ),
