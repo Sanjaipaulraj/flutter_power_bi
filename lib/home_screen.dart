@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_power_bi/dashboard_model.dart';
-import 'draggable_dashboard.dart';
+import 'package:flutter_power_bi/custom_dashboard.dart';
 import 'dashboard_data.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
     tableData = dashboard['tables'];
     _loadData();
     super.initState();
-    // print(jsonEncode(tables));
   }
 
   void _loadData() {
@@ -78,14 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           Expanded(
             child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    color: Colors.grey[100],
-                    child: DraggableDashboard(tables: tables),
-                  ),
-                ),
-              ],
+              children: [Expanded(child: CustomDashboard(tables: tables))],
             ),
           ),
         ],
