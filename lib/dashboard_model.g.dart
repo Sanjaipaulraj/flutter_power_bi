@@ -27,6 +27,9 @@ TableConfig _$TableConfigFromJson(Map<String, dynamic> json) => TableConfig(
   columns: (json['columns'] as List<dynamic>?)
       ?.map((e) => ColumnConfig.fromJson(e as Map<String, dynamic>))
       .toList(),
+  columnValues: (json['columnValues'] as List<dynamic>?)
+      ?.map((e) => e as Map<String, dynamic>)
+      .toList(),
 );
 
 Map<String, dynamic> _$TableConfigToJson(TableConfig instance) =>
@@ -39,6 +42,7 @@ Map<String, dynamic> _$TableConfigToJson(TableConfig instance) =>
       'offsetY': instance.offsetY,
       'datasource': instance.datasource,
       'columns': instance.columns,
+      'columnValues': instance.columnValues,
     };
 
 ColumnConfig _$ColumnConfigFromJson(Map<String, dynamic> json) => ColumnConfig(

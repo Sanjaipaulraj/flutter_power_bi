@@ -22,6 +22,7 @@ class TableConfig {
   final double? offsetY;
   final String? datasource;
   final List<ColumnConfig>? columns;
+  final List<Map<String, dynamic>>? columnValues;
 
   TableConfig({
     required this.tableName,
@@ -32,6 +33,7 @@ class TableConfig {
     this.offsetY,
     this.datasource,
     this.columns,
+    this.columnValues,
   });
 
   factory TableConfig.fromJson(Map<String, dynamic> json) => _$TableConfigFromJson(json);
@@ -39,7 +41,7 @@ class TableConfig {
 
   @override
   toString() {
-    return 'TableConfig(tableName: $tableName, heading: $heading, height: $height, width: $width, offsetX: $offsetX, offsetY: $offsetY, datasource: $datasource, columns: $columns)';
+    return 'TableConfig(tableName: $tableName, heading: $heading, height: $height, width: $width, offsetX: $offsetX, offsetY: $offsetY, datasource: $datasource, columns: $columns, columnValues: $columnValues, )';
   }
 }
 

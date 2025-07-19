@@ -54,6 +54,7 @@ class _CustomTableState extends State<CustomTable> {
   double width = 0.0;
   double height = 0.0;
   List<ColumnConfig> columns = [];
+  List<Map<String, dynamic>>? columnValues = [];
 
   @override
   void initState() {
@@ -65,6 +66,7 @@ class _CustomTableState extends State<CustomTable> {
     height = widget.data!.height ?? 400;
     width = widget.data!.width ?? 400;
     columns = widget.data!.columns ?? [];
+    columnValues = widget.data!.columnValues ?? [];
   }
 
   @override
@@ -72,6 +74,11 @@ class _CustomTableState extends State<CustomTable> {
     if (widget.data == null) {
       return CircularProgressIndicator();
     }
+
+    Set<dynamic> allKeys = (columnValues != null && columnValues!.isNotEmpty)
+        ? columnValues![0].keys.toSet()
+        : <dynamic>{};
+    List<dynamic> keysList = allKeys.toList();
 
     return Card(
       elevation: 6,
@@ -99,7 +106,7 @@ class _CustomTableState extends State<CustomTable> {
                                 width: col.width,
                                 child: Text(
                                   col.title,
-                                  textAlign: TextAlign.left,
+                                  textAlign: TextAlign.center,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                 ),
@@ -113,28 +120,28 @@ class _CustomTableState extends State<CustomTable> {
                   Expanded(
                     child: SingleChildScrollView(
                       scrollDirection: Axis.vertical,
-                      // child: Column(
-                      //       children: widget.data!.map((row) {
-                      //         return Row(
-                      //           children: [
-                      //             for (int i = 0; i < keysList.length; i++)
-                      //               Expanded(
-                      //                 child: Padding(
-                      //                   padding: const EdgeInsets.all(8.0),
-                      //                   child: SizedBox(
-                      //                     width: columnWidths[i],
-                      //                     child: Text(
-                      //                       "${row[keysList[i]] ?? ""}",
-                      //                       overflow: TextOverflow.ellipsis,
-                      //                       textAlign: TextAlign.left,
-                      //                     ),
-                      //                   ),
-                      //                 ),
-                      //               ),
-                      //           ],
-                      //         );
-                      //       }).toList(),
-                      //     ),
+                      child: Column(
+                        children: columnValues!.map((row) {
+                          return Row(
+                            children: List.generate(
+                              keysList.length,
+                              (i) => Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: SizedBox(
+                                    width: columns[i].width,
+                                    child: Text(
+                                      "${row[keysList[i]] ?? ""}",
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ],

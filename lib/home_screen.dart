@@ -13,17 +13,35 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<TableConfig> tables = [];
   List<Map<String, dynamic>> tableData = [];
+  Map<String, dynamic>? data;
 
   @override
   void initState() {
     tableData = dashboard['tables'];
     _loadData();
+    // print(tables);
     super.initState();
   }
 
   void _loadData() {
     setState(() {
+      data = dataSource;
       for (final el in tableData) {
+        final datasource = el['datasource'];
+        final columns = (el['columns'] as List<dynamic>? ?? [])
+            .map((col) => col is ColumnConfig ? col : ColumnConfig.fromMap(col as Map<String, dynamic>))
+            .toList();
+        List<Map<String, dynamic>> columnValues = [];
+        if (datasource != null && data != null && data![datasource] is List) {
+          final sourceData = data![datasource] as List<dynamic>;
+          for (final row in sourceData) {
+            Map<String, dynamic> valueRow = {};
+            for (final col in columns) {
+              valueRow[col.valueFrom] = row[col.valueFrom];
+            }
+            columnValues.add(valueRow);
+          }
+        }
         tables.add(
           TableConfig(
             tableName: el['tableName'],
@@ -32,10 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
             width: el['width'],
             offsetX: el['offsetX'],
             offsetY: el['offsetY'],
-            datasource: el['datasource'],
-            columns: (el['columns'] as List<dynamic>? ?? [])
-                .map((col) => col is ColumnConfig ? col : ColumnConfig.fromMap(col as Map<String, dynamic>))
-                .toList(),
+            datasource: datasource,
+            columns: columns,
+            columnValues: columnValues,
           ),
         );
       }
