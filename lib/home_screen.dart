@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_power_bi/dashboard_model.dart';
-import 'package:flutter_power_bi/custom_dashboard.dart';
+import 'package:flutter_power_bi/custom_table.dart';
 import 'dashboard_data.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     tableData = dashboard['tables'];
     _loadData();
-    // print(tables);
     super.initState();
   }
 
@@ -80,7 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.settings, color: Colors.white),
-                      onPressed: () {},
+                      onPressed: () {
+                        _loadData();
+                      },
                     ),
                     IconButton(
                       icon: const Icon(Icons.account_circle, color: Colors.white),
@@ -91,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-
           Expanded(
             child: Row(
               children: [Expanded(child: CustomDashboard(tables: tables))],
